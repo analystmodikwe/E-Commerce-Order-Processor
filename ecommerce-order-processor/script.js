@@ -209,3 +209,31 @@ function formatEmail(text) {
 // TO TEST THE FUNCTION
 console.log(formatEmail(" LETHABO123GMAIL.COMMM "));
 
+// TASK4 Extract or manipulate parts of a string, such as a customer's first name or the domain of their email address.
+// Returns the first name, capitalised. Example: " thabiso mokoena " -> "Thabiso"
+function extractFirstName(customerName) {
+    // trim, then split into words and take the first one
+    const firstWord = customerName.trim().split(" ")[0];
+
+    // capitalise the first letter and lowercase the rest
+    const firstName = firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
+
+    return { firstName };   // shorthand for { firstName: firstName }
+}
+
+console.log(extractFirstName(" thabiso mokoena "));  // { firstName: "Thabiso" } 
+
+// Returns the part after the "@", or "Invalid email" if there is no "@"
+function extractEmailDomain(email) {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // includes() checks the "@" exists before we try to split on it
+    if (!cleanEmail.includes("@")) {
+        return { domain: "Invalid email" };
+    }
+
+    return { domain: cleanEmail.split("@")[1] };
+}
+
+console.log(extractEmailDomain(" lethabo123gmail.commm "));  // { domain: "Invalid email" }
+console.log(extractEmailDomain(" lesedi123@gmail.com "));    // { domain: "gmail.com" }
