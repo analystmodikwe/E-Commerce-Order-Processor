@@ -221,7 +221,7 @@ function extractFirstName(customerName) {
     return { firstName };   // shorthand for { firstName: firstName }
 }
 
-console.log(extractFirstName(" thabiso mokoena "));  // { firstName: "Thabiso" } 
+console.log(extractFirstName(" thabiso mokoena "));  
 
 // Returns the part after the "@", or "Invalid email" if there is no "@"
 function extractEmailDomain(email) {
@@ -235,5 +235,5 @@ function extractEmailDomain(email) {
     return { domain: cleanEmail.split("@")[1] };
 }
 
-console.log(extractEmailDomain(" lethabo123gmail.commm "));  // { domain: "Invalid email" }
-console.log(extractEmailDomain(" lesedi123@gmail.com "));    // { domain: "gmail.com" }
+console.log(extractEmailDomain(" lethabo123gmail.commm "));  
+console.log(extractEmailDomain(" lesedi123@gmail.com "));   
