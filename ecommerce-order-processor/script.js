@@ -35,8 +35,59 @@ let order = [
         category: "large Appliances",
         price: 18000,
         orderDate: "15 October 2026",
-    }
-   
-    
-
-]
+    },
+    {
+        orderId : 5,
+        customerName : "Naledi Mabaso",
+        email: "naledi123@gmail.com",
+        product: "Washing Machine",
+        category: "large Appliances",
+        price: 12000,
+        orderDate: "20 October 2026",
+    },
+    {
+        orderId : 6,
+        customerName : "Sipho Dlamini",
+        email: "sipho123@gmail.com",
+        product: "Microwave",
+        category: "large Appliances",
+        price: 8000,
+        orderDate: "25 October 2026",
+    },
+    {
+        orderId : 7,
+        customerName : "Lerato Mokoena",
+        email: "lerato123@gmail.com",
+        product: "Blender",
+        category: "small Appliances",
+        price: 5000,
+        orderDate: "30 September 2026",
+    },
+    {
+        orderId : 8,
+        customerName : "Thabo Mthembu",
+        email: "thabo123@gmail.com",
+        product: "Toaster",
+        category: "small Appliances",
+        price: 3000,
+        orderDate: "05 September 2026",
+    },
+    {
+        orderId : 9,
+        customerName : "Palesa Khumalo",
+        email: "palesa123@gmail.com",
+        product: "Vacuum Cleaner",
+        category: "small Appliances",
+        price: 4000,
+        orderDate: "10 September 2026",
+    },
+    {
+        orderId : 10,
+        customerName : "Mpho Mokoena",
+        email: "mpho123@gmail.com",
+        product: "Coffee Maker",
+        category: "small Appliances",
+        price: 7500,
+        orderDate: "15 September 2026",
+    },
+];
