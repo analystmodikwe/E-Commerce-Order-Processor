@@ -188,8 +188,13 @@ function removeSpaces(customerName, email ) {
 //  a function that formats every customer name consistently (for example, capitalising the first letter of each word)
 function formatCustomerName(customerName){
     return {
-        customerName: customerName.toUpperCase(),
+        customerName: customerName
+            .trim()  // " lesEdi modiKwe " -> "lesEdi modiKwe"
+            .toLowerCase()  // "lesEdi modiKwe" -> "lesed modikwe"
+            .split(" ")     // string -> array of words: ["lesedi", "modikwe"]
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalise first letter of a word slice separtes it
+            .join(" "), // array -> string: "Lesedi Modikwe"
     }
 }
-
-console.log(formatCustomerName("lesedi modikwe"))
+// TO TEST THE FUNCTION
+console.log(formatCustomerName(" lesEdi modiKwe "))
