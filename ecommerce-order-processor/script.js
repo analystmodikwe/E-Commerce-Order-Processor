@@ -196,6 +196,16 @@ function formatCustomerName(customerName){
             .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalise first letter of a word slice separtes it
             .join(" "), // array -> string: "Lesedi Modikwe"
     }
+};
+// TO TEST THE FUNCTION
+console.log(formatCustomerName(" lesEdi modiKwe "));
+
+// TASK3 Convert text between uppercase and lowercase where appropriate .
+function formatEmail(text) {
+    return text
+        .trim() // remove whitespace from the beginning and end
+        .toLowerCase() // convert to lowercase
 }
 // TO TEST THE FUNCTION
-console.log(formatCustomerName(" lesEdi modiKwe "))
+console.log(formatEmail(" LETHABO123GMAIL.COMMM "));
+
