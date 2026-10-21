@@ -1,5 +1,5 @@
 //  adding 10 different objects
-let order = [
+let orders = [
     {
         orderId : 1,
         customerName : "Lesedi Modikwe",
@@ -109,3 +109,13 @@ let order = [
         orderDate: "19 September 2027",
     },
 ];
+
+// creating an element, applying Tailwind classes, and sets its text safely.
+// textContent treats values as plain text, so nothing is parsed as HTML.
+function createEl(tag, classes, text = "") {
+    const el = document.createElement(tag);
+    el.className = classes;
+    el.textContent = text;
+    return el;
+}
+
