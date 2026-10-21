@@ -27,7 +27,24 @@
                 <h2 class="text-xl font-semibold mb-4">Search / Filter</h2>
                 <div id="search-filter-container"></div>
             </section>
-            
+
+            <!-- Statistics and Categories sit side by side on medium+ screens, stacked on mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Statistics totals, averages, etc. -->
+                <section id="statistics" class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Statistics</h2>
+                    <div id="statistics-container"></div>
+                </section>
+
+                <!-- Categories: orders grouped by product category -->
+                <section id="categories" class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Categories</h2>
+                    <div id="categories-container"></div>
+                </section>
+            </div>
+
+
     </header>
 
 </body>
