@@ -182,7 +182,8 @@ function removeSpaces(customerName, email ) {
         email: email.trim()
     }
 };
-
+// testing the function
+console.log(removeSpaces(" lethabo zikode ", " mpho123gmail.commm "))
 
 // TASK2
 //  a function that formats every customer name consistently (for example, capitalising the first letter of each word)
