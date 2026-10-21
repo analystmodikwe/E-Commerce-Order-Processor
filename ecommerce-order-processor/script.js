@@ -123,8 +123,8 @@ function createEl(tag, classes, text = "") {
 function createOrderCard(order) {
     // Outer card: stacked on mobile, a row on medium+ screens
     const card = createEl(
-        "div",
-        "border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+    "div",
+    "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2"
     );
 
     // Left block: order ID, customer name and email
@@ -143,7 +143,8 @@ function createOrderCard(order) {
     );
 
     // Right: price (shown as-is for now, cleaning comes in the Data Processing step)
-    const priceEl = createEl("p", "font-bold text-blue-600", `R${order.price}`);
+    // Price: text-right pushes it to the right edge of the third column
+    const priceEl = createEl("p", "font-bold text-blue-600 md:text-right", `R${order.price}`);
 
     // Put the three blocks inside the card
     card.append(customerBlock, productBlock, priceEl);
