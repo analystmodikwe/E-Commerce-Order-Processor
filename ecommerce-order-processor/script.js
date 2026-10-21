@@ -151,3 +151,23 @@ function createOrderCard(order) {
 }
 
 
+// Render a list of orders into the Orders section
+function renderOrders(orderList) {
+    // This id must match the div in index.html
+    const container = document.getElementById("orders-container");
+
+    // Clear old content so re-rendering (e.g. after filtering) doesn't duplicate cards
+    container.replaceChildren();
+
+    // Friendly message if the list is empty
+    if (orderList.length === 0) {
+        container.append(createEl("p", "text-gray-500", "No orders found."));
+        return;
+    }
+
+    // Create a card for every order and add it to the container
+    orderList.forEach(order => container.append(createOrderCard(order)));
+}
+
+// Show all orders when the page loads
+renderOrders(orders);
