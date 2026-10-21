@@ -119,3 +119,35 @@ function createEl(tag, classes, text = "") {
     return el;
 }
 
+// Build one order card from one order object
+function createOrderCard(order) {
+    // Outer card: stacked on mobile, a row on medium+ screens
+    const card = createEl(
+        "div",
+        "border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+    );
+
+    // Left block: order ID, customer name and email
+    const customerBlock = document.createElement("div");
+    customerBlock.append(
+        createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
+        createEl("p", "font-semibold", order.customerName),
+        createEl("p", "text-sm text-gray-500", order.email)
+    );
+
+    // Middle block: product, category and order date
+    const productBlock = document.createElement("div");
+    productBlock.append(
+        createEl("p", "font-medium", order.product),
+        createEl("p", "text-sm text-gray-500", `${order.category} · ${order.orderDate}`)
+    );
+
+    // Right: price (shown as-is for now, cleaning comes in the Data Processing step)
+    const priceEl = createEl("p", "font-bold text-blue-600", `R${order.price}`);
+
+    // Put the three blocks inside the card
+    card.append(customerBlock, productBlock, priceEl);
+    return card;
+}
+
+
