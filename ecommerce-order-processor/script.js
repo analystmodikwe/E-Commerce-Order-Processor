@@ -90,4 +90,22 @@ let order = [
         price: 7500,
         orderDate: "15 September 2026",
     },
+    { //object with messy data
+        orderId : 11,
+        customerName : " lethabo zikode ",
+        email: "mpho123gmail.commm",
+        product: "Kettle",
+        category: "small Appliances",
+        price: 7500.887,
+        orderDate: "25 September 2027",
+    },
+    { //object with messy data
+        orderId : 12,
+        customerName : " BonGani msibi ",
+        email: "Bongani123gmail.comhm",
+        product: "Coffee Maker",
+        category: "small Appliances",
+        price: 7500.887,
+        orderDate: "19 September 2027",
+    },
 ];
