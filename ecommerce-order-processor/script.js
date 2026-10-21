@@ -172,3 +172,15 @@ function renderOrders(orderList) {
 
 // Show all orders when the page loads
 renderOrders(orders);
+
+// CHALLENGE 1 
+// TASK1 A FUNCTION TO REMOVE WHITE SPACES FROM CUSTOMER NAME AND EMAIL
+
+function removeSpaces(customerName, email ) {
+    return {
+        customerName: customerName.trim(),
+        email: email.trim()
+    }
+};
+
+
