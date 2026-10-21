@@ -101,7 +101,7 @@ let orders = [
     },
     { //object with messy data
         orderId : 12,
-        customerName : " BonGani msibi ",
+        customerName : " bonGani msibi ",
         email: "Bongani123gmail.comhm",
         product: "Coffee Maker",
         category: "small Appliances",
@@ -174,7 +174,7 @@ function renderOrders(orderList) {
 renderOrders(orders);
 
 // CHALLENGE 1 
-// TASK1 A FUNCTION TO REMOVE WHITE SPACES FROM CUSTOMER NAME AND EMAIL
+// TASK1 A FUNCTION TO REMOVE WHITE SPACES FROM the first and las part of the text
 
 function removeSpaces(customerName, email ) {
     return {
@@ -184,3 +184,12 @@ function removeSpaces(customerName, email ) {
 };
 
 
+// TASK2
+//  a function that formats every customer name consistently (for example, capitalising the first letter of each word)
+function formatCustomerName(customerName){
+    return {
+        customerName: customerName.toUpperCase(),
+    }
+}
+
+console.log(formatCustomerName("lesedi modikwe"))
