@@ -928,7 +928,7 @@ function refreshApp() {
     dateOrders = processOrders(orders);   // "orders" is the raw array; dateOrders is rebuilt from it
 
     renderOrders(dateOrders);
-    renderPriceStats(dateOrders);
+    renderStatistics(dateOrders);
     renderCategories(dateOrders);
     renderProductLookup(dateOrders);
     renderSearchSection();
