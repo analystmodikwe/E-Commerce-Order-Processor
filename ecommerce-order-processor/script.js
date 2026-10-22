@@ -1082,9 +1082,93 @@ renderJsonTools();
 refreshApp();
 
 
-
 console.log("\n=========================================== CHALLENGE 8 =========================================== ");
-console.log("\n======= Step ) =======");
+console.log("\n======= Step 2: the validators and the validation tool) =======");
+
+// ---------- CHALLENGE 8: Validate With Patterns (RegExp) ----------
+
+// TASK 1: email validator.
+// ^           start of the text
+// [^\s@]+     one or more characters that are NOT a space or "@" (the name part)
+// @           exactly one "@"
+// [^\s@]+     one or more characters that are not a space or "@" (the domain part)
+// \.          a literal dot
+// [a-z]{2,}   two or more letters (the ending, like com or co.za's "za")
+// $           end of the text      i = ignore upper/lower case
+// The pattern sits inside the function (not in a const) so cards can use it
+// even though they are first drawn earlier in the file.
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email);   // test() returns true or false
+}
+
+// TASK 2: order ID validator.
+// Accepts "ORD-" plus exactly 4 digits (ORD-0001), OR plain digits (12), which is what your data uses.
+function isValidOrderId(orderId) {
+    return /^(ORD-\d{4}|\d+)$/.test(orderId);
+}
+
+// Each entry is one field the tool can test. Add more here and the dropdown updates itself.
+const VALIDATORS = [
+    { label: "Email", check: isValidEmail, example: "name@example.com" },
+    { label: "Order ID", check: isValidOrderId, example: "ORD-0001 or 12" }
+];
+
+// TASK 4: a tool where the user types a value and sees whether it passes
+function renderValidationTool() {
+    const container = document.getElementById("data-processing-container");
+
+    const inputClasses = "border border-gray-300 rounded px-3 py-2 text-sm";
+    const tool = createEl("div", "space-y-2 mt-6 border-t border-gray-200 pt-6");
+    const row = createEl("div", "flex flex-wrap gap-2");
+
+    // Dropdown built from the VALIDATORS list; the value is the index in the array
+    const select = createEl("select", inputClasses);
+    VALIDATORS.forEach((validator, index) => {
+        const option = createEl("option", "", validator.label);
+        option.value = String(index);
+        select.append(option);
+    });
+
+    const input = createEl("input", inputClasses + " w-64");
+    const result = createEl("p", "text-sm");
+
+    function runCheck() {
+        const validator = VALIDATORS[Number(select.value)];
+        input.placeholder = `e.g. ${validator.example}`;
+        const value = input.value.trim();
+
+        if (value === "") {
+            result.textContent = "Type a value to test it.";
+            result.className = "text-sm text-gray-500";
+        } else if (validator.check(value)) {
+            result.textContent = `"${value}" is a valid ${validator.label.toLowerCase()}.`;
+            result.className = "text-sm text-green-700 font-medium";
+        } else {
+            result.textContent = `"${value}" is NOT a valid ${validator.label.toLowerCase()}. Expected something like ${validator.example}.`;
+            result.className = "text-sm text-red-600 font-medium";
+        }
+    }
+
+    // The result updates as the user types or changes the field
+    select.addEventListener("change", runCheck);
+    input.addEventListener("input", runCheck);
+
+    row.append(select, input);
+    tool.append(createEl("h3", "font-semibold", "Validation tool"), row, result);
+    container.append(tool);   // append, so the JSON tools above stay in place
+    runCheck();
+}
+
+renderValidationTool();
+
+// Console tests
+console.log(isValidEmail("lesedi123@gmail.com"), isValidEmail("lesedi123gmail.com"), isValidEmail("a@b"));   // true false false
+console.log(isValidOrderId("ORD-0001"), isValidOrderId("ORD-1"), isValidOrderId("12"), isValidOrderId("abc"));  // true false true false
+
+
+
+
+
 
 console.log("\n=========================================== CHALLENGE 9 =========================================== ");
 console.log("\n======= Step ) =======");
