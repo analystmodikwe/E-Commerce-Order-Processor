@@ -351,4 +351,40 @@ function calculatePriceStats(orderList) {
 // Test in the console
 console.log(calculatePriceStats(pricedOrders));
 
-console.log("\n======= Step 2: price helpers and calculations =======");
+console.log("\n======= Step 2: show the price stats in the Statistics section =======");
+
+// Fills the Statistics section with the price calculations
+function renderPriceStats(orderList) {
+    const container = document.getElementById("statistics-container");
+    container.replaceChildren();   // clear old content so re-rendering doesn't duplicate rows
+
+    const stats = calculatePriceStats(orderList);
+    if (stats === null) {
+        container.append(createEl("p", "text-gray-500", "No orders to analyse."));
+        return;
+    }
+
+    // Each row is a [label, value] pair
+    const rows = [
+        ["Number of orders", stats.count],
+        ["Total order value", formatMoney(stats.total)],
+        ["Average order price", formatMoney(stats.average)],
+        ["Highest order price", formatMoney(stats.highest)],
+        ["Lowest order price", formatMoney(stats.lowest)],
+        ["Total VAT (15%)", formatMoney(roundMoney(stats.total * VAT_RATE))]
+    ];
+
+    // Build one row per pair: label on the left, value on the right
+    rows.forEach(([label, value]) => {
+        const row = createEl("div", "flex justify-between border-b border-gray-100 py-2");
+        row.append(
+            createEl("span", "text-gray-600", label),
+            createEl("span", "font-semibold", String(value))
+        );
+        container.append(row);
+    });
+}
+
+// Replace your old renderOrders(cleanedOrders) call with these two
+renderOrders(pricedOrders);
+renderPriceStats(pricedOrders);
