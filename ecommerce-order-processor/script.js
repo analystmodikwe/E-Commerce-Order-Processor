@@ -388,3 +388,20 @@ function renderPriceStats(orderList) {
 // Replace your old renderOrders(cleanedOrders) call with these two
 renderOrders(pricedOrders);
 renderPriceStats(pricedOrders);
+
+console.log("\n======= Step 3: show formatted prices and VAT on each card =======");
+// Right block: price to 2 decimals, with the VAT-inclusive total underneath
+const priceBlock = document.createElement("div");
+priceBlock.className = "md:text-right";
+priceBlock.append(
+    createEl("p", "font-bold text-blue-600", formatMoney(order.price)),
+    createEl("p", "text-xs text-gray-400", `Incl. VAT: ${formatMoney(order.priceInclVat)}`)
+);
+
+// Use priceBlock in place of priceEl
+card.append(customerBlock, productBlock, priceBlock);
+
+
+
+
+console.log("\n=========================================== CHALLENGE 3 =========================================== ");
