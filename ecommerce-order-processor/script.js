@@ -1166,12 +1166,112 @@ console.log(isValidEmail("lesedi123@gmail.com"), isValidEmail("lesedi123gmail.co
 console.log(isValidOrderId("ORD-0001"), isValidOrderId("ORD-1"), isValidOrderId("12"), isValidOrderId("abc"));  // true false true false
 
 
-
-
-
-
 console.log("\n=========================================== CHALLENGE 9 =========================================== ");
-console.log("\n======= Step ) =======");
+console.log("\n======= Step 1: the dashboard code ) =======");
+
+
+// ---------- CHALLENGE 9: Statistics Dashboard ----------
+
+// Gathers every statistic from one order list. It takes the list as a parameter,
+// so the numbers stay correct whenever the dataset changes.
+function calculateDashboardStats(orderList) {
+    if (orderList.length === 0) {
+        return null;   // nothing to analyse
+    }
+
+    // Number + Math + Array (Challenge 2): count, total, average, highest and lowest
+    const priceStats = calculatePriceStats(orderList);
+
+    // Array: find() locates the order that has the highest / lowest price
+    const highestOrder = orderList.find(order => order.price === priceStats.highest);
+    const lowestOrder = orderList.find(order => order.price === priceStats.lowest);
+
+    // Map: number of orders per category (get() returns undefined for a new key, so ?? 0 starts the count)
+    const ordersPerCategory = new Map();
+    orderList.forEach(order => {
+        const category = order.category.trim();
+        ordersPerCategory.set(category, (ordersPerCategory.get(category) ?? 0) + 1);
+    });
+
+    // Set: unique categories (Challenge 5)
+    const uniqueCategoryCount = getUniqueCategories(orderList).size;
+
+    // RegExp: how many emails pass the Challenge 8 pattern
+    const validEmails = orderList.filter(order => isValidEmail(order.email)).length;
+
+    // Map + reduce: the product Map from Challenge 6, then reduce keeps the priciest product
+    const products = [...buildProductMap(orderList).values()];
+    const mostExpensiveProduct = products.reduce((best, product) => product.price > best.price ? product : best);
+
+    // Date: orders marked "Recent" in Challenge 3
+    const recentOrders = orderList.filter(order => order.dateStatus === "Recent").length;
+
+    return {
+        ...priceStats,                         // count, total, average, highest, lowest
+        highestOrder,
+        lowestOrder,
+        ordersPerCategory,
+        uniqueCategoryCount,
+        validEmails,
+        invalidEmails: orderList.length - validEmails,
+        mostExpensiveProduct,
+        recentOrders
+    };
+}
+
+// Draws the dashboard into the Statistics section
+function renderStatistics(orderList) {
+    const container = document.getElementById("statistics-container");
+    container.replaceChildren();   // clear old rows so re-rendering doesn't duplicate
+
+    const stats = calculateDashboardStats(orderList);
+    if (stats === null) {
+        container.append(createEl("p", "text-gray-500", "No orders to analyse."));
+        return;
+    }
+
+    // Each row is [label, value, optional Tailwind classes for the value]
+    const rows = [
+        ["Total number of orders", stats.count],
+        ["Total order value", formatMoney(stats.total)],
+        ["Average order value", formatMoney(stats.average)],
+        ["Highest-priced order", `#${stats.highestOrder.orderId} · ${formatMoney(stats.highest)}`],
+        ["Lowest-priced order", `#${stats.lowestOrder.orderId} · ${formatMoney(stats.lowest)}`],
+        ["Most expensive product", `${stats.mostExpensiveProduct.name} · ${formatMoney(stats.mostExpensiveProduct.price)}`],
+        ["Number of unique categories", stats.uniqueCategoryCount],
+        ["Valid emails", stats.validEmails, "font-semibold text-green-700"],
+        ["Invalid emails", stats.invalidEmails, stats.invalidEmails > 0 ? "font-semibold text-red-600" : "font-semibold"],
+        [`Recent orders (last ${RECENT_DAYS} days)`, stats.recentOrders],
+        [`Total VAT (${Math.round(VAT_RATE * 100)}%)`, formatMoney(roundMoney(stats.total * VAT_RATE))]
+    ];
+
+    rows.forEach(([label, value, valueClasses = "font-semibold"]) => {
+        const row = createEl("div", "flex justify-between gap-4 border-b border-gray-100 py-2");
+        row.append(
+            createEl("span", "text-gray-600", label),
+            createEl("span", valueClasses + " text-right", String(value))
+        );
+        container.append(row);
+    });
+
+    // Orders per category, one row per Map entry
+    container.append(createEl("h3", "font-semibold mt-4 mb-1", "Orders per category"));
+    stats.ordersPerCategory.forEach((count, category) => {
+        const row = createEl("div", "flex justify-between border-b border-gray-100 py-2");
+        row.append(
+            createEl("span", "text-gray-600", category),
+            createEl("span", "font-semibold", String(count))
+        );
+        container.append(row);
+    });
+}
+
+renderStatistics(dateOrders);
+console.log(calculateDashboardStats(dateOrders));
+
+
+
+
 
 console.log("\n=========================================== CHALLENGE 10 =========================================== ");
 console.log("\n======= Step ) =======");
