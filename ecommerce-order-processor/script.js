@@ -291,3 +291,64 @@ console.log(extractEmailDomain(" lesedi123@gmail.com "));
 console.log("\n======= TASK3 =======");
 
 console.log("\n=========================================== CHALLENGE 2 =========================================== ");
+console.log("\n======= Step 1: price helpers and calculations =======");
+// ---------- CHALLENGE 2: Calculate Prices ----------
+
+// South African VAT rate (15%). Keeping it in one constant avoids hard-coding it everywhere.
+const VAT_RATE = 0.15;
+
+// Rounds money to 2 decimals. Math.round works on whole numbers, so we
+// multiply by 100 (cents), round, then divide by 100 again.
+function roundMoney(amount) {
+    return Math.round(amount * 100) / 100;
+}
+
+// Formats a number as a price with exactly 2 decimals: 9000 -> "R9000.00"
+function formatMoney(amount) {
+    return "R" + amount.toFixed(2);
+}
+
+// TASK 1 + 5: build a new array with clean prices and VAT on every order
+const pricedOrders = cleanedOrders.map(order => {
+    // parseFloat converts text like "7500.887" to a number (numbers pass through unchanged),
+    // then we round to cents so every price is a proper money value
+    const price = roundMoney(parseFloat(order.price));
+
+    // VAT amount and the total including VAT, both rounded to cents
+    const vat = roundMoney(price * VAT_RATE);
+
+    return {
+        ...order,               // keep every field from the cleaned order
+        price: price,           // 7500.887 -> 7500.89
+        vat: vat,
+        priceInclVat: roundMoney(price + vat)
+    };
+});
+
+// TASKS 2, 3, 4: total, average, highest and lowest.
+// It takes the list as a parameter, so the results stay correct if the dataset changes.
+function calculatePriceStats(orderList) {
+    // Avoid dividing by zero or calling Math.max on an empty list
+    if (orderList.length === 0) {
+        return null;
+    }
+
+    // Pull just the prices out into their own array
+    const prices = orderList.map(order => order.price);
+
+    // reduce adds the prices up one by one, starting from 0
+    const total = prices.reduce((sum, price) => sum + price, 0);
+
+    return {
+        count: prices.length,
+        total: roundMoney(total),
+        average: roundMoney(total / prices.length),
+        highest: Math.max(...prices),   // spread (...) turns the array into separate arguments
+        lowest: Math.min(...prices)
+    };
+}
+
+// Test in the console
+console.log(calculatePriceStats(pricedOrders));
+
+console.log("\n======= Step 2: price helpers and calculations =======");
