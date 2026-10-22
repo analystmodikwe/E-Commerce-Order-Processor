@@ -1270,8 +1270,6 @@ renderStatistics(dateOrders);
 console.log(calculateDashboardStats(dateOrders));
 
 
-
-
-
 console.log("\n=========================================== CHALLENGE 10 =========================================== ");
-console.log("\n======= Step ) =======");
+// CHALLENGE 10
+
