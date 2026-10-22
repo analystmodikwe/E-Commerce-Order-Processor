@@ -676,3 +676,93 @@ function renderFilterControls() {
 }
 
 renderFilterControls();
+
+
+console.log("\n=========================================== CHALLENGE 5 =========================================== ");
+console.log("\n======= Step 1: the Set and the Categories section (Tasks 1 and 2)) =======");
+
+
+// ---------- CHALLENGE 5: Unique Categories (Set) ----------
+
+// TASK 1: a Set only keeps unique values, so duplicates disappear automatically.
+// map() pulls out every category, and new Set() removes the repeats.
+function getUniqueCategories(orderList) {
+    return new Set(orderList.map(order => order.category.trim()));
+}
+
+// TASK 2: show each unique category once, with how many orders belong to it
+function renderCategories(orderList) {
+    const container = document.getElementById("categories-container");
+    container.replaceChildren();   // clear old content so re-rendering doesn't duplicate
+
+    const categories = getUniqueCategories(orderList);
+
+    // .size is the number of unique values in the Set
+    container.append(createEl("p", "text-sm text-gray-500 mb-3", `${categories.size} unique categories`));
+
+    const list = createEl("div", "flex flex-wrap gap-2");
+    categories.forEach(category => {
+        // filter().length counts the orders in this category
+        const count = orderList.filter(order => order.category.trim() === category).length;
+        list.append(
+            createEl("span", "bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full", `${category} (${count})`)
+        );
+    });
+    container.append(list);
+}
+
+// TASK 3 (part 1): fill a <select> dropdown from the Set instead of hard-coded options
+function populateCategoryDropdown(select, orderList) {
+    select.replaceChildren();
+
+    // First option means "no category filter"
+    const allOption = createEl("option", "", "All categories");
+    allOption.value = "";
+    select.append(allOption);
+
+    // One option per unique category
+    getUniqueCategories(orderList).forEach(category => {
+        const option = createEl("option", "", category);
+        option.value = category;
+        select.append(option);
+    });
+}
+
+// Show the categories when the page loads
+renderCategories(dateOrders);
+console.log(getUniqueCategories(dateOrders));   // Set(3) { 'Electronics', 'large Appliances', 'small Appliances' }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+console.log("\n=========================================== CHALLENGE 6 =========================================== ");
+console.log("\n======= Step ) =======");
+
+console.log("\n=========================================== CHALLENGE 7 =========================================== ");
+console.log("\n======= Step ) =======");
+
+console.log("\n=========================================== CHALLENGE 8 =========================================== ");
+console.log("\n======= Step ) =======");
+
+console.log("\n=========================================== CHALLENGE 9 =========================================== ");
+console.log("\n======= Step ) =======");
+
+console.log("\n=========================================== CHALLENGE 10 =========================================== ");
+console.log("\n======= Step ) =======");
