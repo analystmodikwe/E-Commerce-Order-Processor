@@ -968,9 +968,107 @@ function validateImportedOrders(data) {
     return null;   // no problems found
 }
 
+console.log("\n======= Step 3: the export and import interface (Tasks 1 to 3) =======");
 
+// Builds the Export / Import tools inside the Data Processing section (called once)
+function renderJsonTools() {
+    const container = document.getElementById("data-processing-container");
+    const wrapper = createEl("div", "space-y-6");
 
+    // Shared Tailwind classes
+    const boxClasses = "w-full h-48 border border-gray-300 rounded p-3 font-mono text-xs";
+    const buttonClasses = "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded";
+    const greyButtonClasses = "bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-3 py-2 rounded";
 
+    // ----- EXPORT (Task 1): JSON.stringify turns the array into text -----
+    const exportBlock = createEl("div", "space-y-2");
+    const exportBox = createEl("textarea", boxClasses);
+    exportBox.id = "export-box";
+    exportBox.readOnly = true;
+    exportBox.value = JSON.stringify(orders, null, 2);   // null, 2 = pretty-print with 2-space indents
+    exportBlock.append(createEl("h3", "font-semibold", "Export orders as JSON"), exportBox);
+
+    // ----- IMPORT (Tasks 2 to 4): JSON.parse turns text back into objects -----
+    const importBlock = createEl("div", "space-y-2");
+    const importBox = createEl("textarea", boxClasses);
+    importBox.placeholder = "Paste a JSON array of orders here";
+
+    const message = createEl("p", "text-sm");   // success and error messages appear here
+
+    function showMessage(text, isError) {
+        message.textContent = text;
+        message.className = isError ? "text-sm text-red-600" : "text-sm text-green-700";
+    }
+
+    // mode is "add" (append to the dataset) or "replace" (swap the whole dataset)
+    function runImport(mode) {
+        const text = importBox.value.trim();
+        if (text === "") {
+            showMessage("Paste some JSON first.", true);
+            return;
+        }
+
+        // TASK 4: JSON.parse throws on bad syntax, so catch it and show a clear message
+        let parsed;
+        try {
+            parsed = JSON.parse(text);
+        } catch (error) {
+            showMessage(`Invalid JSON: ${error.message}`, true);
+            return;
+        }
+
+        // Valid JSON can still be the wrong shape, so check the structure too
+        const problem = validateImportedOrders(parsed);
+        if (problem) {
+            showMessage(problem, true);
+            return;
+        }
+
+        // TASK 3: use the parsed data
+        if (mode === "replace") {
+            orders = parsed;
+            showMessage(`Replaced the dataset with ${parsed.length} orders.`, false);
+        } else {
+            // A Set of existing IDs lets us skip orders that are already in the dataset
+            const existingIds = new Set(orders.map(order => String(order.orderId)));
+            const newOrders = parsed.filter(order => !existingIds.has(String(order.orderId)));
+            const skipped = parsed.length - newOrders.length;
+
+            orders = [...orders, ...newOrders];
+            showMessage(
+                `Added ${newOrders.length} new order${newOrders.length === 1 ? "" : "s"}` +
+                (skipped > 0 ? `, skipped ${skipped} with an orderId that already exists.` : "."),
+                false
+            );
+        }
+
+        refreshApp();   // every section updates from the new data
+    }
+
+    const addButton = createEl("button", buttonClasses, "Import and add to dataset");
+    addButton.addEventListener("click", () => runImport("add"));
+
+    const replaceButton = createEl("button", greyButtonClasses, "Import and replace dataset");
+    replaceButton.addEventListener("click", () => runImport("replace"));
+
+    // Handy for testing the edit-and-reimport flow: copies the export into the import box
+    const copyButton = createEl("button", greyButtonClasses, "Copy export to import box");
+    copyButton.addEventListener("click", () => {
+        importBox.value = exportBox.value;
+    });
+
+    const buttonRow = createEl("div", "flex flex-wrap gap-2");
+    buttonRow.append(addButton, replaceButton, copyButton);
+
+    importBlock.append(createEl("h3", "font-semibold", "Import orders from JSON"), importBox, buttonRow, message);
+
+    wrapper.append(exportBlock, importBlock);
+    container.append(wrapper);   // append (not replaceChildren), so Challenge 8's tool can share this section
+}
+
+// Build the tools, then render everything from the data
+renderJsonTools();
+refreshApp();
 
 
 
