@@ -512,3 +512,26 @@ function renderSortControls() {
 }
 
 console.log("\n======= Step 3: show the date and a status badge on each card =======");
+
+// Middle block: product, category, readable date, days ago and a status badge
+const productBlock = document.createElement("div");
+
+// Tailwind badge colours for each status
+const badgeClasses = {
+    Recent: "bg-green-100 text-green-700",
+    Older: "bg-gray-100 text-gray-600",
+    Upcoming: "bg-amber-100 text-amber-700",
+    Invalid: "bg-red-100 text-red-700"
+};
+
+const dateRow = createEl("div", "flex flex-wrap items-center gap-2 mt-1");
+dateRow.append(
+    createEl("span", `text-xs font-medium px-2 py-0.5 rounded-full ${badgeClasses[order.dateStatus]}`, order.dateStatus),
+    createEl("span", "text-xs text-gray-400", order.daysAgoText)
+);
+
+productBlock.append(
+    createEl("p", "font-medium", order.product),
+    createEl("p", "text-sm text-gray-500", `${order.category} · ${order.displayDate}`),
+    dateRow
+);
