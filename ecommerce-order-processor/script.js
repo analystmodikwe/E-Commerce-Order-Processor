@@ -119,48 +119,58 @@ function createEl(tag, classes, text = "") {
     return el;
 }
 
+
 // Build one order card from one order object
 function createOrderCard(order) {
-  // Outer card: stacked on mobile, a row on medium+ screens
-  const card = createEl(
-    "div",
-    "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2",
-  );
+    // Outer card: 3-column grid on medium+ screens so cards line up
+    const card = createEl(
+        "div",
+        "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2"
+    );
 
-  // Left block: order ID, customer name and email
-  const customerBlock = document.createElement("div");
-  customerBlock.append(
-    createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
-    createEl("p", "font-semibold", order.customerName),
-    createEl("p", "text-sm text-gray-500", order.email),
-  );
+    // Left block: order ID, name, email and email domain
+    const customerBlock = document.createElement("div");
+    const domainClasses = order.domain === "Invalid email" ? "text-xs text-red-500" : "text-xs text-gray-400";
+    customerBlock.append(
+        createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
+        createEl("p", "font-semibold", order.customerName),
+        createEl("p", "text-sm text-gray-500", order.email),
+        createEl("p", domainClasses, `Domain: ${order.domain}`)
+    );
 
-  // Middle block: product, category and order date
-  const productBlock = document.createElement("div");
-  productBlock.append(
-    createEl("p", "font-medium", order.product),
-    createEl(
-      "p",
-      "text-sm text-gray-500",
-      `${order.category} · ${order.orderDate}`,
-    ),
-  );
+    // Middle block: product, category, readable date, days ago and a status badge
+    const productBlock = document.createElement("div");
 
-  // Right block: price to 2 decimals, with the VAT-inclusive total underneath
-  const priceBlock = document.createElement("div");
-  priceBlock.className = "md:text-right";
-  priceBlock.append(
-    createEl("p", "font-bold text-blue-600", formatMoney(order.price)),
-    createEl(
-      "p",
-      "text-xs text-gray-400",
-      `Incl. VAT: ${formatMoney(order.priceInclVat)}`,
-    ),
-  );
+    // Tailwind badge colours for each status
+    const badgeClasses = {
+        Recent: "bg-green-100 text-green-700",
+        Older: "bg-gray-100 text-gray-600",
+        Upcoming: "bg-amber-100 text-amber-700",
+        Invalid: "bg-red-100 text-red-700"
+    };
 
-  
-  card.append(customerBlock, productBlock, priceBlock);
-  return card;
+    const dateRow = createEl("div", "flex flex-wrap items-center gap-2 mt-1");
+    dateRow.append(
+        createEl("span", `text-xs font-medium px-2 py-0.5 rounded-full ${badgeClasses[order.dateStatus]}`, order.dateStatus),
+        createEl("span", "text-xs text-gray-400", order.daysAgoText)
+    );
+
+    productBlock.append(
+        createEl("p", "font-medium", order.product),
+        createEl("p", "text-sm text-gray-500", `${order.category} · ${order.displayDate}`),
+        dateRow
+    );
+
+    // Right block: price to 2 decimals, with the VAT-inclusive total underneath
+    const priceBlock = document.createElement("div");
+    priceBlock.className = "md:text-right";
+    priceBlock.append(
+        createEl("p", "font-bold text-blue-600", formatMoney(order.price)),
+        createEl("p", "text-xs text-gray-400", `Incl. VAT: ${formatMoney(order.priceInclVat)}`)
+    );
+
+    card.append(customerBlock, productBlock, priceBlock);
+    return card;
 }
 
 
@@ -515,25 +525,3 @@ function renderSortControls() {
 
 console.log("\n======= Step 3: show the date and a status badge on each card =======");
 
-// Middle block: product, category, readable date, days ago and a status badge
-const productBlock = document.createElement("div");
-
-// Tailwind badge colours for each status
-const badgeClasses = {
-    Recent: "bg-green-100 text-green-700",
-    Older: "bg-gray-100 text-gray-600",
-    Upcoming: "bg-amber-100 text-amber-700",
-    Invalid: "bg-red-100 text-red-700"
-};
-
-const dateRow = createEl("div", "flex flex-wrap items-center gap-2 mt-1");
-dateRow.append(
-    createEl("span", `text-xs font-medium px-2 py-0.5 rounded-full ${badgeClasses[order.dateStatus]}`, order.dateStatus),
-    createEl("span", "text-xs text-gray-400", order.daysAgoText)
-);
-
-productBlock.append(
-    createEl("p", "font-medium", order.product),
-    createEl("p", "text-sm text-gray-500", `${order.category} · ${order.displayDate}`),
-    dateRow
-);
