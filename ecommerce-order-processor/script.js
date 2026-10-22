@@ -137,20 +137,34 @@ function createOrderCard(order) {
         "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2"
     );
 
-    // Left block: order ID, name, email and email domain
+    // Challenge 8: run the RegExp checks on this order
+    const emailOk = isValidEmail(order.email);
+    const idOk = isValidOrderId(String(order.orderId));
+
+    // Tailwind badge colours for valid / invalid
+    const validBadge = "bg-green-100 text-green-700";
+    const invalidBadge = "bg-red-100 text-red-700";
+
+    // Row of validation badges, shown under the email
+    const validityRow = createEl("div", "flex flex-wrap gap-2 mt-1");
+    validityRow.append(
+        createEl("span", `text-xs font-medium px-2 py-0.5 rounded-full ${emailOk ? validBadge : invalidBadge}`, emailOk ? "Email valid" : "Email invalid"),
+        createEl("span", `text-xs font-medium px-2 py-0.5 rounded-full ${idOk ? validBadge : invalidBadge}`, idOk ? "ID valid" : "ID invalid")
+    );
+
+    // Left block: order ID, name, email (red when invalid), domain and validation badges
     const customerBlock = document.createElement("div");
     const domainClasses = order.domain === "Invalid email" ? "text-xs text-red-500" : "text-xs text-gray-400";
     customerBlock.append(
         createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
         createEl("p", "font-semibold", order.customerName),
-        createEl("p", "text-sm text-gray-500", order.email),
-        createEl("p", domainClasses, `Domain: ${order.domain}`)
+        createEl("p", emailOk ? "text-sm text-gray-500" : "text-sm text-red-600 font-medium", order.email),
+        createEl("p", domainClasses, `Domain: ${order.domain}`),
+        validityRow
     );
 
     // Middle block: product, category, readable date, days ago and a status badge
     const productBlock = document.createElement("div");
-
-    // Tailwind badge colours for each status
     const badgeClasses = {
         Recent: "bg-green-100 text-green-700",
         Older: "bg-gray-100 text-gray-600",
@@ -181,7 +195,6 @@ function createOrderCard(order) {
     card.append(customerBlock, productBlock, priceBlock);
     return card;
 }
-
 
 // Render a list of orders into the Orders section
 function renderOrders(orderList) {
