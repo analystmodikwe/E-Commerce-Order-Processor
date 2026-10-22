@@ -93,7 +93,7 @@ let orders = [
     { //object with messy data
         orderId : 11,
         customerName : " lethabo zikode ",
-        email: "mpho123gmail.com",
+        email: "lethabo123mail.com",
         product: "Kettle",
         category: "small Appliances",
         price: 500.887,
@@ -102,7 +102,7 @@ let orders = [
     { //object with messy data
         orderId : 12,
         customerName : " bonGani msibi ",
-        email: "Bongani123gmail.com",
+        email: "Bongani123yahoo.com",
         product: "Coffee Maker",
         category: "small Appliances",
         price: 7500.887,
@@ -478,8 +478,6 @@ const dateOrders = pricedOrders.map(order => {
         dateStatus: getDateStatus(daysAgo)
     };
 });
-renderOrders(dateOrders);
-renderSortControls();
 
 // TASK 3: sort by comparing the timestamps (getTime() gives milliseconds as a number).
 // [...list] copies the array first, because sort() changes the array it is called on.
@@ -522,6 +520,59 @@ function renderSortControls() {
     bar.append(newestButton, oldestButton, originalButton, summary);
     container.append(bar);
 }
+renderOrders(dateOrders);
+renderSortControls();
 
-console.log("\n======= Step 3: show the date and a status badge on each card =======");
 
+console.log("\n=========================================== CHALLENGE 4 =========================================== ");
+console.log("\n======= Step 1: the array-method functions (Tasks 1 to 7) =======");
+// ---------- CHALLENGE 4: Search, Filter and Analyse Orders ----------
+
+// TASK 1 (find): returns the FIRST order whose ID matches or whose name contains the text.
+function findOrder(orderList, searchText) {
+    const text = searchText.trim().toLowerCase();
+    if (text === "") return undefined;   // empty text would match every name, so stop here
+
+    return orderList.find(order =>
+        String(order.orderId) === text ||                  // exact ID match
+        order.customerName.toLowerCase().includes(text)    // partial, case-insensitive name match
+    );
+}
+
+// TASK 2 (filter): keeps orders whose category contains the text. Empty text keeps everything.
+function filterByCategory(orderList, categoryText) {
+    const text = categoryText.trim().toLowerCase();
+    if (text === "") return orderList;
+    return orderList.filter(order => order.category.toLowerCase().includes(text));
+}
+
+// TASK 3 (filter): keeps orders whose price is between min and max (inclusive).
+function filterByPriceRange(orderList, min, max) {
+    return orderList.filter(order => order.price >= min && order.price <= max);
+}
+
+// TASK 4 (map): a transformed list of "Product: price incl. VAT" strings.
+function getProductPriceList(orderList) {
+    return orderList.map(order => `${order.product}: ${formatMoney(order.priceInclVat)}`);
+}
+
+// TASK 5 (some): is there at least one order above the limit?
+function hasOrderOver(orderList, limit) {
+    return orderList.some(order => order.price > limit);
+}
+
+// TASK 6 (every): do all orders have a valid, positive price?
+function allPricesValid(orderList) {
+    return orderList.every(order => Number.isFinite(order.price) && order.price > 0);
+}
+
+// TASK 7 (reduce): total value of a list of orders.
+function totalValue(orderList) {
+    return roundMoney(orderList.reduce((sum, order) => sum + order.price, 0));
+}
+
+// Quick console tests
+console.log(findOrder(dateOrders, "3"));
+console.log(filterByCategory(dateOrders, "large").length);       // 3
+console.log(filterByPriceRange(dateOrders, 5000, 10000).length);
+console.log(hasOrderOver(dateOrders, 10000), allPricesValid(dateOrders), totalValue(dateOrders));
