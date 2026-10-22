@@ -93,16 +93,16 @@ let orders = [
     { //object with messy data
         orderId : 11,
         customerName : " lethabo zikode ",
-        email: "mpho123gmail.commm",
+        email: "mpho123gmail.com",
         product: "Kettle",
         category: "small Appliances",
-        price: 7500.887,
+        price: 500.887,
         orderDate: "25 September 2027",
     },
     { //object with messy data
         orderId : 12,
         customerName : " bonGani msibi ",
-        email: "Bongani123gmail.comhm",
+        email: "Bongani123gmail.com",
         product: "Coffee Maker",
         category: "small Appliances",
         price: 7500.887,
@@ -170,9 +170,10 @@ function renderOrders(orderList) {
     orderList.forEach(order => container.append(createOrderCard(order)));
 }
 
-// Show all orders when the page loads
-renderOrders(orders);
 
+
+console.log("\n=========================================== CHALLENGE 1 =========================================== ");
+console.log("\n======= TASK1 =======");
 // CHALLENGE 1 
 // TASK1 A FUNCTION TO REMOVE WHITE SPACES FROM the first and las part of the text
 
@@ -183,8 +184,10 @@ function removeSpaces(customerName, email ) {
     }
 };
 // testing the function
-console.log(removeSpaces(" lethabo zikode ", " mpho123gmail.commm "))
+console.log(removeSpaces(" lethabo zikode ", " mpho123gmail.commm "));
+console.log("\n======= TASK1 =======");
 
+console.log("\n======= TASK2 =======");
 // TASK2
 //  a function that formats every customer name consistently (for example, capitalising the first letter of each word)
 function formatCustomerName(customerName){
@@ -199,7 +202,9 @@ function formatCustomerName(customerName){
 };
 // TO TEST THE FUNCTION
 console.log(formatCustomerName(" lesEdi modiKwe "));
+console.log("\n======= TASK2 =======");
 
+console.log("\n======= TASK3 =======");
 // TASK3 Convert text between uppercase and lowercase where appropriate .
 function formatEmail(text) {
     return text
@@ -208,6 +213,27 @@ function formatEmail(text) {
 }
 // TO TEST THE FUNCTION
 console.log(formatEmail(" LETHABO123GMAIL.COMMM "));
+
+// Example: "mpho123gmail.commm" -> "mpho123@gmail.commm"
+function addMissingAt(email) {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Already has an "@", so leave it alone
+    if (cleanEmail.includes("@")) {
+        return cleanEmail;
+    }
+
+    // Find where "gmail" starts; -1 means it isn't in the text
+    const gmailPosition = cleanEmail.indexOf("gmail");
+    if (gmailPosition === -1) {
+        return cleanEmail;   // can't guess where the "@" belongs
+    }
+
+    // Text before "gmail" + "@" + "gmail" and everything after
+    return cleanEmail.slice(0, gmailPosition) + "@" + cleanEmail.slice(gmailPosition);
+}
+
+console.log(addMissingAt(" mpho123gmail.commm "));
 
 // TASK4 Extract or manipulate parts of a string, such as a customer's first name or the domain of their email address.
 // Returns the first name, capitalised. Example: " thabiso mokoena " -> "Thabiso"
@@ -235,5 +261,33 @@ function extractEmailDomain(email) {
     return { domain: cleanEmail.split("@")[1] };
 }
 
+// TASK 5: build a cleaned copy of the orders and display it.
+// map() runs the cleaning functions on every order and returns a NEW array,
+// so the original messy "orders" array stays untouched.
+const cleanedOrders = orders.map(order => {
+    // Task 1: remove extra spaces from the name and email
+    const trimmed = removeSpaces(order.customerName, order.email);
+
+    return {
+        ...order,   // copy every other field unchanged (orderId, product, price, etc.)
+
+        // Task 2: capitalise each word. The function returns an object, so we take .customerName
+        customerName: formatCustomerName(trimmed.customerName).customerName,
+
+        email: addMissingAt(trimmed.email),
+        domain: extractEmailDomain(addMissingAt(trimmed.email)).domain
+    };
+});
+
+// Show the cleaned orders in the Orders section
+renderOrders(cleanedOrders);
+
+// Check orders 11 and 12 in the console, since they have the messy data
+console.log(cleanedOrders[10]);
+console.log(cleanedOrders[11]);
+
 console.log(extractEmailDomain(" lethabo123gmail.commm "));  
 console.log(extractEmailDomain(" lesedi123@gmail.com "));   
+console.log("\n======= TASK3 =======");
+
+console.log("\n=========================================== CHALLENGE 2 =========================================== ");
