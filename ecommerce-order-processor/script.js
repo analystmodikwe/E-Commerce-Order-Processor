@@ -121,34 +121,46 @@ function createEl(tag, classes, text = "") {
 
 // Build one order card from one order object
 function createOrderCard(order) {
-    // Outer card: stacked on mobile, a row on medium+ screens
-    const card = createEl(
+  // Outer card: stacked on mobile, a row on medium+ screens
+  const card = createEl(
     "div",
-    "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2"
-    );
+    "border border-gray-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 md:items-center gap-2",
+  );
 
-    // Left block: order ID, customer name and email
-    const customerBlock = document.createElement("div");
-    customerBlock.append(
-        createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
-        createEl("p", "font-semibold", order.customerName),
-        createEl("p", "text-sm text-gray-500", order.email)
-    );
+  // Left block: order ID, customer name and email
+  const customerBlock = document.createElement("div");
+  customerBlock.append(
+    createEl("p", "text-xs text-gray-400", `Order #${order.orderId}`),
+    createEl("p", "font-semibold", order.customerName),
+    createEl("p", "text-sm text-gray-500", order.email),
+  );
 
-    // Middle block: product, category and order date
-    const productBlock = document.createElement("div");
-    productBlock.append(
-        createEl("p", "font-medium", order.product),
-        createEl("p", "text-sm text-gray-500", `${order.category} · ${order.orderDate}`)
-    );
+  // Middle block: product, category and order date
+  const productBlock = document.createElement("div");
+  productBlock.append(
+    createEl("p", "font-medium", order.product),
+    createEl(
+      "p",
+      "text-sm text-gray-500",
+      `${order.category} · ${order.orderDate}`,
+    ),
+  );
 
-    // Right: price (shown as-is for now, cleaning comes in the Data Processing step)
-    // Price: text-right pushes it to the right edge of the third column
-    const priceEl = createEl("p", "font-bold text-blue-600 md:text-right", `R${order.price}`);
+  // Right block: price to 2 decimals, with the VAT-inclusive total underneath
+  const priceBlock = document.createElement("div");
+  priceBlock.className = "md:text-right";
+  priceBlock.append(
+    createEl("p", "font-bold text-blue-600", formatMoney(order.price)),
+    createEl(
+      "p",
+      "text-xs text-gray-400",
+      `Incl. VAT: ${formatMoney(order.priceInclVat)}`,
+    ),
+  );
 
-    // Put the three blocks inside the card
-    card.append(customerBlock, productBlock, priceEl);
-    return card;
+  
+  card.append(customerBlock, productBlock, priceBlock);
+  return card;
 }
 
 
@@ -279,8 +291,7 @@ const cleanedOrders = orders.map(order => {
     };
 });
 
-// Show the cleaned orders in the Orders section
-renderOrders(cleanedOrders);
+
 
 // Check orders 11 and 12 in the console, since they have the messy data
 console.log(cleanedOrders[10]);
@@ -305,6 +316,9 @@ function roundMoney(amount) {
 
 // Formats a number as a price with exactly 2 decimals: 9000 -> "R9000.00"
 function formatMoney(amount) {
+    if (!Number.isFinite(amount)) {
+        return "N/A";
+    }
     return "R" + amount.toFixed(2);
 }
 
@@ -389,17 +403,6 @@ function renderPriceStats(orderList) {
 renderOrders(pricedOrders);
 renderPriceStats(pricedOrders);
 
-console.log("\n======= Step 3: show formatted prices and VAT on each card =======");
-// Right block: price to 2 decimals, with the VAT-inclusive total underneath
-const priceBlock = document.createElement("div");
-priceBlock.className = "md:text-right";
-priceBlock.append(
-    createEl("p", "font-bold text-blue-600", formatMoney(order.price)),
-    createEl("p", "text-xs text-gray-400", `Incl. VAT: ${formatMoney(order.priceInclVat)}`)
-);
-
-// Use priceBlock in place of priceEl
-card.append(customerBlock, productBlock, priceBlock);
 
 
 
