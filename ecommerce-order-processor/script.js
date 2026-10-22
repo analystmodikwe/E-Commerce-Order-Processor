@@ -864,26 +864,79 @@ function renderProductLookup(orderList) {
 renderProductLookup(dateOrders);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 console.log("\n=========================================== CHALLENGE 7 =========================================== ");
-console.log("\n======= Step ) =======");
+console.log("\n======= Step 1: make the pipeline re-runnable ) =======");
+
+// ---------- CHALLENGE 7: Export and Import Orders (JSON) ----------
+
+// Runs the full pipeline (Challenges 1 to 3) on any raw order list, reusing  existing helpers.
+// Because it takes a list as a parameter, imported orders get cleaned exactly like the originals.
+function processOrders(rawList) {
+    const todayDate = getToday();
+
+    return rawList.map(order => {
+        // Challenge 1: clean the text fields
+        const trimmed = removeSpaces(order.customerName, order.email);
+        const fixedEmail = addMissingAt(trimmed.email);
+
+        // Challenge 2: price, VAT and price including VAT
+        const price = roundMoney(parseFloat(order.price));
+        const vat = roundMoney(price * VAT_RATE);
+
+        // Challenge 3: Date object, readable date, days ago and status
+        const dateObj = new Date(order.orderDate);
+        const daysAgo = daysSince(dateObj, todayDate);
+
+        return {
+            ...order,
+            customerName: formatCustomerName(trimmed.customerName).customerName,
+            email: fixedEmail,
+            domain: extractEmailDomain(fixedEmail).domain,
+            price: price,
+            vat: vat,
+            priceInclVat: roundMoney(price + vat),
+            dateObj: dateObj,
+            displayDate: formatDate(dateObj),
+            daysAgo: daysAgo,
+            daysAgoText: describeDaysAgo(daysAgo),
+            dateStatus: getDateStatus(daysAgo)
+        };
+    });
+}
+
+// Search / Filter holds the sort buttons (Challenge 3) and the filters (Challenge 4).
+// Clearing it first means rebuilding doesn't duplicate the controls.
+function renderSearchSection() {
+    document.getElementById("search-filter-container").replaceChildren();
+    renderSortControls();
+    renderFilterControls();
+}
+
+// Re-processes the raw orders and refreshes EVERY section from the new data
+function refreshApp() {
+    dateOrders = processOrders(orders);   // "orders" is the raw array; dateOrders is rebuilt from it
+
+    renderOrders(dateOrders);
+    renderPriceStats(dateOrders);
+    renderCategories(dateOrders);
+    renderProductLookup(dateOrders);
+    renderSearchSection();
+
+    // Keep the exported JSON text in sync (the box only exists once renderJsonTools has run)
+    const exportBox = document.getElementById("export-box");
+    if (exportBox) {
+        exportBox.value = JSON.stringify(orders, null, 2);
+    }
+}
+
+
+
+
+
+
+
+
+
 
 console.log("\n=========================================== CHALLENGE 8 =========================================== ");
 console.log("\n======= Step ) =======");
