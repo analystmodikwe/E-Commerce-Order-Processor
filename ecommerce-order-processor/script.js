@@ -108,6 +108,15 @@ let orders = [
         price: 7500.887,
         orderDate: "19 September 2027",
     },
+    {
+    orderId: 13,
+    customerName: "Test Customer",
+    email: "test123@gmail.com",
+    product: "Office Chair",
+    category: "Furniture",
+    price: 2500,
+    orderDate: "10 October 2026",
+    },
 ];
 
 // creating an element, applying Tailwind classes, and sets its text safely.
@@ -622,8 +631,9 @@ function renderFilterControls() {
 
     // ----- Row 2: filter by category and price range -----
     const filterRow = createEl("div", "flex flex-wrap gap-2");
-    const categoryInput = createEl("input", inputClasses);
-    categoryInput.placeholder = "Category (e.g. large)";
+    // Dropdown built from the Set, so it always matches the real data
+    const categoryInput = createEl("select", inputClasses);
+    populateCategoryDropdown(categoryInput, dateOrders);
     const minInput = createEl("input", inputClasses + " w-32");
     minInput.type = "number";
     minInput.placeholder = "Min price";
