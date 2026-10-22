@@ -743,27 +743,144 @@ renderCategories(dateOrders);
 console.log(getUniqueCategories(dateOrders));   // Set(3) { 'Electronics', 'large Appliances', 'small Appliances' }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 console.log("\n=========================================== CHALLENGE 6 =========================================== ");
-console.log("\n======= Step ) =======");
+console.log("\n======= Step 1: build the Map (Task 1) ) =======");
+
+// ---------- CHALLENGE 6: Product Lookup (Map) ----------
+
+// TASK 1: a Map stores key -> value pairs. Here the key is the product name
+// (lowercase, so the search is case-insensitive) and the value is an object of details.
+function buildProductMap(orderList) {
+    const productMap = new Map();
+
+    orderList.forEach(order => {
+        const key = order.product.trim().toLowerCase();
+
+        // has() checks whether the key already exists.
+        // A product can appear in several orders (e.g. Coffee Maker), but a Map key must be unique,
+        // so we keep the first entry and just count the extra orders.
+        if (productMap.has(key)) {
+            productMap.get(key).orderCount += 1;
+            return;
+        }
+
+        // set() adds a new key with its details
+        productMap.set(key, {
+            name: order.product.trim(),        // original capitalisation for display
+            price: order.price,
+            priceInclVat: order.priceInclVat,
+            category: order.category.trim(),
+            orderCount: 1
+        });
+    });
+
+    return productMap;
+}
+
+const productMap = buildProductMap(dateOrders);
+
+// Quick console tests
+console.log(productMap.size);                    // number of unique products
+console.log(productMap.get("laptop"));           // the details object
+console.log(productMap.has("sofa"));             // false
+console.log([...productMap.keys()]);             // all the product keys
+
+console.log("\n======= Step 2: the Product Lookup interface (Tasks 2 and 3) ) =======");
+
+// Builds the lookup box and result area inside the Product Lookup section
+function renderProductLookup(orderList) {
+    const container = document.getElementById("product-lookup-container");
+    container.replaceChildren();   // safe here: this section only holds the lookup
+
+    const lookupMap = buildProductMap(orderList);
+
+    // Shared Tailwind classes
+    const inputClasses = "border border-gray-300 rounded px-3 py-2 text-sm";
+    const buttonClasses = "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded";
+
+    container.append(createEl("p", "text-sm text-gray-500 mb-3", `${lookupMap.size} products available`));
+
+    // Text input with a <datalist>: the browser suggests product names as the user types
+    const row = createEl("div", "flex flex-wrap gap-2");
+    const input = createEl("input", inputClasses);
+    input.placeholder = "Type a product name";
+    input.setAttribute("list", "product-suggestions");
+
+    const suggestions = createEl("datalist", "");
+    suggestions.id = "product-suggestions";
+    // values() gives the details objects, so we can show the original capitalisation
+    lookupMap.forEach(details => {
+        const option = createEl("option", "");
+        option.value = details.name;
+        suggestions.append(option);
+    });
+
+    const button = createEl("button", buttonClasses, "Look up");
+    row.append(input, suggestions, button);
+
+    // Area where the result or the "not found" message appears
+    const result = createEl("div", "mt-4");
+
+    function lookUp() {
+        result.replaceChildren();
+        const searchKey = input.value.trim().toLowerCase();
+
+        // Nothing typed yet
+        if (searchKey === "") {
+            result.append(createEl("p", "text-gray-500", "Type or choose a product name first."));
+            return;
+        }
+
+        // TASK 3: has() checks first, so an unknown product gives a message instead of an error
+        if (!lookupMap.has(searchKey)) {
+            result.append(
+                createEl("p", "text-red-600", `No product called "${input.value.trim()}" was found. Check the spelling or pick one from the suggestions.`)
+            );
+            return;
+        }
+
+        // TASK 2: get() returns the details object for that key
+        const details = lookupMap.get(searchKey);
+        const card = createEl("div", "border border-gray-200 rounded-lg p-4 space-y-1");
+        card.append(
+            createEl("p", "font-semibold text-lg", details.name),
+            createEl("p", "text-sm text-gray-500", `Category: ${details.category}`),
+            createEl("p", "text-blue-600 font-bold", formatMoney(details.price)),
+            createEl("p", "text-xs text-gray-400", `Incl. VAT: ${formatMoney(details.priceInclVat)}`),
+            createEl("p", "text-xs text-gray-400", `Appears in ${details.orderCount} order${details.orderCount === 1 ? "" : "s"}`)
+        );
+        result.append(card);
+    }
+
+    button.addEventListener("click", lookUp);
+    // Pressing Enter in the box also runs the lookup
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") lookUp();
+    });
+
+    container.append(row, result);
+}
+
+renderProductLookup(dateOrders);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 console.log("\n=========================================== CHALLENGE 7 =========================================== ");
 console.log("\n======= Step ) =======");
