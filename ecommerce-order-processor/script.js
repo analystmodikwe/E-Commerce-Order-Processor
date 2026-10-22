@@ -929,8 +929,44 @@ function refreshApp() {
     }
 }
 
+console.log("\n======= Step 2: validate imported data (Task 4) ) =======");
+const REQUIRED_FIELDS = ["orderId", "customerName", "email", "product", "category", "price", "orderDate"];
+const TEXT_FIELDS = ["customerName", "email", "product", "category", "orderDate"];
 
+// Returns an error message (string) if the data is unusable, or null if it is fine
+function validateImportedOrders(data) {
+    if (!Array.isArray(data)) {
+        return "The JSON must be an array of orders, like [ { ... }, { ... } ].";
+    }
+    if (data.length === 0) {
+        return "The array is empty, so there are no orders to import.";
+    }
 
+    for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+
+        if (typeof item !== "object" || item === null || Array.isArray(item)) {
+            return `Item ${i + 1} is not an order object.`;
+        }
+
+        // Which required fields are missing or empty?
+        const missing = REQUIRED_FIELDS.filter(field => item[field] === undefined || item[field] === null || item[field] === "");
+        if (missing.length > 0) {
+            return `Order ${i + 1} is missing: ${missing.join(", ")}.`;
+        }
+
+        // Text fields must be strings, or trim() and toLowerCase() would crash later
+        const notText = TEXT_FIELDS.filter(field => typeof item[field] !== "string");
+        if (notText.length > 0) {
+            return `Order ${i + 1}: ${notText.join(", ")} must be text.`;
+        }
+
+        if (!Number.isFinite(parseFloat(item.price))) {
+            return `Order ${i + 1}: price "${item.price}" is not a number.`;
+        }
+    }
+    return null;   // no problems found
+}
 
 
 
