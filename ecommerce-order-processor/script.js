@@ -474,7 +474,7 @@ function describeDaysAgo(daysAgo) {
 
 // TASK 1: build a Date object for every order and add the date fields
 const today = getToday();
-const dateOrders = pricedOrders.map(order => {
+let dateOrders = pricedOrders.map(order => {
     const dateObj = new Date(order.orderDate);   // "18 October 2026" -> Date object
     const daysAgo = daysSince(dateObj, today);
 
@@ -530,7 +530,7 @@ function renderSortControls() {
     container.append(bar);
 }
 renderOrders(dateOrders);
-renderSortControls();
+
 
 
 console.log("\n=========================================== CHALLENGE 4 =========================================== ");
@@ -684,8 +684,6 @@ function renderFilterControls() {
     panel.append(findRow, filterRow, message, analysis, details);
     container.append(panel);
 }
-
-renderFilterControls();
 
 
 console.log("\n=========================================== CHALLENGE 5 =========================================== ");
