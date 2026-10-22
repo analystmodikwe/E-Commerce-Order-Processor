@@ -479,3 +479,36 @@ function sortByDateOldest(orderList) {
 }
 
 console.log(dateOrders.map(o => `#${o.orderId} ${o.displayDate} | ${o.daysAgoText} | ${o.dateStatus}`));
+
+console.log("\n======= Step 2: sort buttons =======");
+// Builds the sort buttons and a count of recent / older / upcoming orders
+function renderSortControls() {
+    const container = document.getElementById("search-filter-container");
+    const bar = createEl("div", "flex flex-wrap items-center gap-2");
+
+    // Shared Tailwind classes for the buttons
+    const buttonClasses = "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded";
+
+    // Each button re-renders the Orders section with a differently ordered list
+    const newestButton = createEl("button", buttonClasses, "Newest first");
+    newestButton.addEventListener("click", () => renderOrders(sortByDateNewest(dateOrders)));
+
+    const oldestButton = createEl("button", buttonClasses, "Oldest first");
+    oldestButton.addEventListener("click", () => renderOrders(sortByDateOldest(dateOrders)));
+
+    const originalButton = createEl("button", buttonClasses, "Original order");
+    originalButton.addEventListener("click", () => renderOrders(dateOrders));
+
+    // filter().length counts how many orders have each status
+    const countOf = status => dateOrders.filter(o => o.dateStatus === status).length;
+    const summary = createEl(
+        "p",
+        "text-sm text-gray-500 w-full",
+        `Recent (last ${RECENT_DAYS} days): ${countOf("Recent")} · Older: ${countOf("Older")} · Upcoming: ${countOf("Upcoming")}`
+    );
+
+    bar.append(newestButton, oldestButton, originalButton, summary);
+    container.append(bar);
+}
+
+console.log("\n======= Step 3: show the date and a status badge on each card =======");
