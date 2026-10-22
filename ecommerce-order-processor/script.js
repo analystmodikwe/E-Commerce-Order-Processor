@@ -576,3 +576,103 @@ console.log(findOrder(dateOrders, "3"));
 console.log(filterByCategory(dateOrders, "large").length);       // 3
 console.log(filterByPriceRange(dateOrders, 5000, 10000).length);
 console.log(hasOrderOver(dateOrders, 10000), allPricesValid(dateOrders), totalValue(dateOrders));
+
+console.log("\n======= Step 2: the Search / Filter interface (Task 8)) =======");
+// Builds the search and filter controls and wires them to the functions above.
+// It uses append (not replaceChildren), so the sort buttons from Challenge 3 stay in place.
+function renderFilterControls() {
+    const container = document.getElementById("search-filter-container");
+    const panel = createEl("div", "mt-4 space-y-3");
+
+    // Shared Tailwind classes
+    const inputClasses = "border border-gray-300 rounded px-3 py-2 text-sm";
+    const buttonClasses = "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded";
+    const resetClasses = "bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-3 py-2 rounded";
+
+    // Message line that reports what is currently shown
+    const message = createEl("p", "text-sm text-gray-600");
+
+    // Shows how many orders are displayed and their total (uses reduce via totalValue)
+    function showSummary(list) {
+        message.textContent =
+            `Showing ${list.length} of ${dateOrders.length} orders · Total ${formatMoney(totalValue(list))}`;
+    }
+
+    // ----- Row 1: find one order by ID or name -----
+    const findRow = createEl("div", "flex flex-wrap gap-2");
+    const findInput = createEl("input", inputClasses);
+    findInput.placeholder = "Order ID or customer name";
+    const findButton = createEl("button", buttonClasses, "Find order");
+
+    findButton.addEventListener("click", () => {
+        if (findInput.value.trim() === "") {
+            message.textContent = "Type an order ID or customer name first.";
+            return;
+        }
+        const found = findOrder(dateOrders, findInput.value);
+        if (!found) {
+            renderOrders([]);   // shows "No orders found."
+            message.textContent = "No order matches that ID or name.";
+            return;
+        }
+        renderOrders([found]);
+        message.textContent = `Found order #${found.orderId}.`;
+    });
+    findRow.append(findInput, findButton);
+
+    // ----- Row 2: filter by category and price range -----
+    const filterRow = createEl("div", "flex flex-wrap gap-2");
+    const categoryInput = createEl("input", inputClasses);
+    categoryInput.placeholder = "Category (e.g. large)";
+    const minInput = createEl("input", inputClasses + " w-32");
+    minInput.type = "number";
+    minInput.placeholder = "Min price";
+    const maxInput = createEl("input", inputClasses + " w-32");
+    maxInput.type = "number";
+    maxInput.placeholder = "Max price";
+    const filterButton = createEl("button", buttonClasses, "Apply filters");
+    const resetButton = createEl("button", resetClasses, "Reset");
+
+    filterButton.addEventListener("click", () => {
+        // Empty boxes mean "no limit": min becomes 0 and max becomes Infinity
+        const min = minInput.value === "" ? 0 : parseFloat(minInput.value);
+        const max = maxInput.value === "" ? Infinity : parseFloat(maxInput.value);
+
+        // Chain the filters: category first, then price range
+        let results = filterByCategory(dateOrders, categoryInput.value);
+        results = filterByPriceRange(results, min, max);
+
+        renderOrders(results);
+        showSummary(results);
+    });
+
+    resetButton.addEventListener("click", () => {
+        findInput.value = "";
+        categoryInput.value = "";
+        minInput.value = "";
+        maxInput.value = "";
+        renderOrders(dateOrders);
+        showSummary(dateOrders);
+    });
+    filterRow.append(categoryInput, minInput, maxInput, filterButton, resetButton);
+
+    // ----- Analysis lines using some(), every() and map() -----
+    const analysis = createEl("div", "text-sm text-gray-600 space-y-1");
+    analysis.append(
+        createEl("p", "", `Any order over R10000? ${hasOrderOver(dateOrders, 10000) ? "Yes" : "No"}`),
+        createEl("p", "", `All prices valid? ${allPricesValid(dateOrders) ? "Yes" : "No"}`)
+    );
+
+    // Collapsible list of product prices including VAT (map)
+    const details = createEl("details", "text-sm text-gray-600");
+    details.append(
+        createEl("summary", "cursor-pointer font-medium", "Product prices incl. VAT"),
+        createEl("p", "mt-1", getProductPriceList(dateOrders).join(" · "))
+    );
+
+    showSummary(dateOrders);
+    panel.append(findRow, filterRow, message, analysis, details);
+    container.append(panel);
+}
+
+renderFilterControls();
