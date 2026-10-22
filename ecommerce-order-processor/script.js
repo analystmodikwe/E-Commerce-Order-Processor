@@ -1269,7 +1269,3 @@ function renderStatistics(orderList) {
 renderStatistics(dateOrders);
 console.log(calculateDashboardStats(dateOrders));
 
-
-console.log("\n=========================================== CHALLENGE 10 =========================================== ");
-// CHALLENGE 10
-
