@@ -67,7 +67,7 @@ Everything runs in the browser. There is no backend and no database.
 ![Validation](assets/validation.png)
 
 ## Reflection
-*(Answer the four reflection questions from the brief here.)*
+*
 1 .map()
 
 2 Challenge 4
