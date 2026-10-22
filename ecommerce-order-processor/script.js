@@ -364,6 +364,8 @@ function calculatePriceStats(orderList) {
 
 // Test in the console
 console.log(calculatePriceStats(pricedOrders));
+console.log("\n======= Step 1: price helpers and calculations =======");
+
 
 console.log("\n======= Step 2: show the price stats in the Statistics section =======");
 
@@ -402,9 +404,78 @@ function renderPriceStats(orderList) {
 // Replace your old renderOrders(cleanedOrders) call with these two
 renderOrders(pricedOrders);
 renderPriceStats(pricedOrders);
-
-
-
+console.log("\n======= Step 2: show the price stats in the Statistics section =======");
 
 
 console.log("\n=========================================== CHALLENGE 3 =========================================== ");
+
+console.log("\n======= Step 1: dates, days ago and recent/older status =======");
+// ---------- CHALLENGE 3: Work With Order Dates ----------
+
+const RECENT_DAYS = 30;                    // orders within this many days count as "recent"
+const MS_PER_DAY = 1000 * 60 * 60 * 24;    // milliseconds in one day
+
+// Today at midnight, so we compare whole days and ignore the time of day
+function getToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+}
+
+// TASK 2: readable format, e.g. "18 October 2026"
+function formatDate(date) {
+    // An invalid Date has a NaN time, so check before formatting
+    if (Number.isNaN(date.getTime())) {
+        return "Invalid date";
+    }
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
+// TASK 5: whole days between the order date and today (negative = date is in the future)
+function daysSince(date, today) {
+    return Math.round((today.getTime() - date.getTime()) / MS_PER_DAY);
+}
+
+// TASK 4: classify an order by how many days ago it was placed
+function getDateStatus(daysAgo) {
+    if (Number.isNaN(daysAgo)) return "Invalid";
+    if (daysAgo < 0) return "Upcoming";          // dated after today
+    if (daysAgo <= RECENT_DAYS) return "Recent";
+    return "Older";
+}
+
+// Turns the number of days into friendly text
+function describeDaysAgo(daysAgo) {
+    if (Number.isNaN(daysAgo)) return "";
+    if (daysAgo === 0) return "Today";
+    if (daysAgo === 1) return "1 day ago";
+    if (daysAgo > 1) return `${daysAgo} days ago`;
+    return `In ${Math.abs(daysAgo)} days`;       // future dates
+}
+
+// TASK 1: build a Date object for every order and add the date fields
+const today = getToday();
+const dateOrders = pricedOrders.map(order => {
+    const dateObj = new Date(order.orderDate);   // "18 October 2026" -> Date object
+    const daysAgo = daysSince(dateObj, today);
+
+    return {
+        ...order,
+        dateObj: dateObj,
+        displayDate: formatDate(dateObj),
+        daysAgo: daysAgo,
+        daysAgoText: describeDaysAgo(daysAgo),
+        dateStatus: getDateStatus(daysAgo)
+    };
+});
+
+// TASK 3: sort by comparing the timestamps (getTime() gives milliseconds as a number).
+// [...list] copies the array first, because sort() changes the array it is called on.
+function sortByDateNewest(orderList) {
+    return [...orderList].sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
+}
+function sortByDateOldest(orderList) {
+    return [...orderList].sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+}
+
+console.log(dateOrders.map(o => `#${o.orderId} ${o.displayDate} | ${o.daysAgoText} | ${o.dateStatus}`));
