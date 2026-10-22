@@ -402,7 +402,7 @@ function renderPriceStats(orderList) {
 }
 
 // Replace your old renderOrders(cleanedOrders) call with these two
-renderOrders(pricedOrders);
+
 renderPriceStats(pricedOrders);
 console.log("\n======= Step 2: show the price stats in the Statistics section =======");
 
@@ -468,6 +468,8 @@ const dateOrders = pricedOrders.map(order => {
         dateStatus: getDateStatus(daysAgo)
     };
 });
+renderOrders(dateOrders);
+renderSortControls();
 
 // TASK 3: sort by comparing the timestamps (getTime() gives milliseconds as a number).
 // [...list] copies the array first, because sort() changes the array it is called on.
